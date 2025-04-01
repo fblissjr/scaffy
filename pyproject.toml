@@ -7,7 +7,7 @@ name = "scaffy"
 version = "0.1.0"
 description = "reads an ascii project tree structure and scaffolds a directory structure with a --dry-run option"
 author = "Fred Bliss"
-license = "Apache License, Version 2.0"
+license = {text = "Apache-2.0"}
 requires-python = ">=3.9"
 dependencies = []
 
@@ -16,4 +16,4 @@ Homepage = "https://github.com/fblissjr/scaffy"
 Issues = "https://github.com/fblissjr/scaffy"
 
 [project.scripts]
-scaffy = "scaffy.scaffold:main"
+scaffy = "scaffy:main"
