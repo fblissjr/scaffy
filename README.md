@@ -38,13 +38,3 @@ a small utility cli that reads an ascii folder tree like the one [below in this 
   ```bash
   scaffy --help
   ```
-
-# project tree
-```
-scaffold-tree/
-├── README.md
-├── pyproject.toml
-└── scaffold_tree/
-    ├── __init__.py
-    └── scaffold.py
-```

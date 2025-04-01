@@ -60,12 +60,20 @@ def actually_create(base_dir: str, path: str, record: Dict) -> None:
                 f.write(f"# {path}\n")
 
 def main():
-    parser = argparse.ArgumentParser(description="scaffy: read an ascii tree and create dirs/files accordingly.")
+    parser = argparse.ArgumentParser(
+        description="scaffy: read an ascii tree and create dirs/files accordingly."
+    )
     parser.add_argument("--tree-file", help="path to a file with the ascii tree")
     parser.add_argument("--tree-string", help="ascii tree passed directly as a string")
-    parser.add_argument("--root-dir", default=".", help="where to create items (default '.')")
-    parser.add_argument("--dry-run", action="store_true", help="show what would be created, no changes made")
+    parser.add_argument(
+        "--root-dir", default=".", help="where to create items (default '.')"
+    )
     parser.add_argument("--project-name", help="name for a minimal default tree (required if no ascii tree is given)")
+    parser.add_argument(
+        "--yes",
+        action="store_true",
+        help="apply changes without prompting (default is dry-run)",
+    )
     args = parser.parse_args()
 
     ascii_lines = None
@@ -73,7 +81,7 @@ def main():
         if not os.path.exists(args.tree_file):
             print(f"error: file '{args.tree_file}' does not exist.")
             sys.exit(1)
-        with open(args.tree_file, 'r', encoding='utf-8') as f:
+        with open(args.tree_file, "r", encoding="utf-8") as f:
             ascii_lines = f.readlines()
     elif args.tree_string:
         ascii_lines = args.tree_string.splitlines()
@@ -82,9 +90,12 @@ def main():
 
     if not ascii_lines:
         if not args.project_name:
-            print("error: no ascii tree provided. please supply a tree or use --project-name.")
+            print(
+                "error: no ascii tree provided. please supply a tree or use --project-name."
+            )
             sys.exit(1)
-        ascii_lines = textwrap.dedent(f"""
+        ascii_lines = (
+            textwrap.dedent(f"""
         {args.project_name}/
         ├── README.md
         ├── .gitignore
@@ -92,7 +103,10 @@ def main():
         │   └── main.py
         └── tests/
             └── test_main.py
-        """).strip('\n').splitlines()
+        """)
+            .strip("\n")
+            .splitlines()
+        )
 
     parsed_paths = parse_ascii_tree(ascii_lines)
     if not parsed_paths:
@@ -100,11 +114,34 @@ def main():
         sys.exit(0)
 
     records = [evaluate_path(args.root_dir, p) for p in parsed_paths]
-    if args.dry_run:
-        print("\n(dry run) these actions would be performed:\n")
-    else:
-        for rec in records:
-            actually_create(args.root_dir, rec["path"], rec)
+
+    print("\n(dry run) these actions would be performed:\n")
+    for r in records:
+        status = "create" if r["status"] == "created" else "skip"
+        print(f"  {r['type']} {r['path']} -> {status}")
+
+    if not args.yes:
+        if sys.stdin.isatty():
+            try:
+                confirm = (
+                    input("\ncontinue and apply these changes? [y/N]: ").strip().lower()
+                )
+                if confirm not in ("y", "yes"):
+                    print("aborted.")
+                    sys.exit(0)
+            except EOFError:
+                print(
+                    "\nerror: cannot prompt for confirmation in non-interactive mode. use --yes to apply."
+                )
+                sys.exit(1)
+        else:
+            print(
+                "\nerror: confirmation required in non-interactive mode. use --yes to apply changes."
+            )
+            sys.exit(1)
+
+    for rec in records:
+        actually_create(args.root_dir, rec["path"], rec)
 
     created = [r for r in records if r["status"] == "created"]
     skipped = [r for r in records if r["status"] == "skipped"]
