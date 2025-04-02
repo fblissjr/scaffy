@@ -1,6 +1,7 @@
 # scaffy
 
-![svg icon of scaffy mascot](https://github.com/user-attachments/assets/6f8cf1aa-57df-4309-ad11-5ccb0f0bef33)
+![svg icon of scaffy mascot](https://github.com/user-attachments/assets/886314f2-bac0-43ee-b9aa-5c0c1cb61135)
+
 
 a small utility cli that reads an ascii folder tree like the one [below in this readme](#project-tree)) from stdin, a file, or a string, and creates directories and files accordingly. it won't overwrite existing files. if no input is provided, it errors and does nothing.
 
