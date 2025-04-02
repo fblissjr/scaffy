@@ -1,13 +1,28 @@
 # scaffy
 
 ![svg icon of scaffy mascot](https://github.com/user-attachments/assets/886314f2-bac0-43ee-b9aa-5c0c1cb61135)
-
+^ this is scaffy
 
 a small utility cli that reads an ascii folder tree (like the one [below in this readme](#project-tree)) from stdin, a file, or a string, and creates directories and files accordingly. it won't overwrite existing files. if no input is provided, it errors and does nothing.
 
 ## usage examples
 
 your project trees should be formatted like this if you're in the parent / root folder, with the `.` at the top indicating current folder as parent. if you want to create the parent as well, you'd just change the `.` to something like `app-cigar-project`.
+
+## normalization rules
+
+```
+| case | example | result |
+|------|---------|--------|
+| current folder as root | `.` | strip and use `--root-dir` as base |
+| relative path with dot | `./foo/bar` | normalize to `foo/bar/` |
+| relative path no dot | `foo/bar` | keep as-is |
+| empty string | *(empty first line)* | ignore or warn |
+| absolute path | `/usr/foo` | reject (outside workspace) |
+| file-looking root | `myapp.py` | (suspicious for root folder) |
+| multiple levels without dot | `foo/bar/baz/` | valid, preserved |
+| windows slashes | `foo\bar` | normalize to `foo/bar` or reject |
+```
 
 ### Example with parent folder as current folder
 ```
@@ -16,11 +31,9 @@ your project trees should be formatted like this if you're in the parent / root 
 ├── LICENSE
 ├── main.py
 ├── presets
-│   └── ffmpeg_presets.json
+│   └── presets_file.json
 ├── presets.py
 ├── README.md
-├── tui.py
-├── tui.tcss
 └── utils.py
 ```
 
@@ -32,11 +45,9 @@ your project trees should be formatted like this if you're in the parent / root 
 ├── LICENSE
 ├── main.py
 ├── presets
-│   └── ffmpeg_presets.json
+│   └── presets_file.json
 ├── presets.py
 ├── README.md
-├── tui.py
-├── tui.tcss
 └── utils.py
 ```
 
