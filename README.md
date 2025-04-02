@@ -1,9 +1,9 @@
 # scaffy
 
-![svg icon of scaffy mascot](https://github.com/user-attachments/assets/886314f2-bac0-43ee-b9aa-5c0c1cb61135)
-^ this is scaffy
+a small utility cli that reads an ascii folder tree (see below format examples) from stdin, a file, or a string, and creates directories and files accordingly. it won't overwrite existing files. if no input is provided, it errors and does nothing.
 
-a small utility cli that reads an ascii folder tree (like the one [below in this readme](#project-tree)) from stdin, a file, or a string, and creates directories and files accordingly. it won't overwrite existing files. if no input is provided, it errors and does nothing.
+![svg icon of scaffy mascot](https://github.com/user-attachments/assets/886314f2-bac0-43ee-b9aa-5c0c1cb61135) <- this is scaffy
+
 
 ## usage examples
 
@@ -11,7 +11,6 @@ your project trees should be formatted like this if you're in the parent / root 
 
 ## normalization rules
 
-```
 | case | example | result |
 |------|---------|--------|
 | current folder as root | `.` | strip and use `--root-dir` as base |
@@ -22,7 +21,6 @@ your project trees should be formatted like this if you're in the parent / root 
 | file-looking root | `myapp.py` | (suspicious for root folder) |
 | multiple levels without dot | `foo/bar/baz/` | valid, preserved |
 | windows slashes | `foo\bar` | normalize to `foo/bar` or reject |
-```
 
 ### Example with parent folder as current folder
 ```
