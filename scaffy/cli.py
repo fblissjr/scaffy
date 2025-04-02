@@ -1,4 +1,6 @@
+# scaffy/cli.py
 import argparse
+import os
 import sys
 import textwrap
 from scaffy.core import parse_ascii_tree, evaluate_path, actually_create
@@ -22,6 +24,11 @@ def main():
         "--yes",
         action="store_true",
         help="apply changes without prompting (default is dry-run)",
+    )
+    parser.add_argument(
+        "--comments",
+        action="store_true",
+        help="include trailing comments in generated files",
     )
     args = parser.parse_args()
 
@@ -54,7 +61,6 @@ def main():
             .splitlines()
         )
 
-    # Normalize the ascii tree
     ascii_lines = sanitize_ascii_tree(ascii_lines)
     parsed_paths = parse_ascii_tree(ascii_lines)
     if not parsed_paths:
@@ -88,7 +94,13 @@ def main():
             sys.exit(1)
 
     for rec in records:
-        actually_create(args.root_dir, rec["path"], rec)
+        actually_create(
+            args.root_dir,
+            rec["path"],
+            rec,
+            ascii_lines=ascii_lines,
+            with_comments=args.comments,
+        )
 
     print("\ndone.")
 

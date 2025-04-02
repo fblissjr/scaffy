@@ -27,6 +27,10 @@ def normalize_root_line(line: str) -> str:
     return line.lstrip('./')
 
 def sanitize_ascii_tree(lines: List[str]) -> List[str]:
+    """
+    Normalize the first root line and return the tree with it updated.
+    Also supports trees that start directly with child lines (├── ...)
+    """
     if not lines:
         return []
 
@@ -35,14 +39,17 @@ def sanitize_ascii_tree(lines: List[str]) -> List[str]:
     if first == ".":
         return lines[1:]  # drop explicit current dir
 
-    # if root omitted, but children start right away
     if first.startswith(("├", "└", "│", " ")):
-        return lines  # treat as relative to `.`
+        return lines  # treat as relative to cwd
 
     normalized_root = normalize_root_line(first)
 
     if not normalized_root:
         return lines[1:]
     else:
-        lines[0] = normalized_root + "/" if not normalized_root.endswith("/") else normalized_root
+        lines[0] = (
+            normalized_root + "/"
+            if not normalized_root.endswith("/")
+            else normalized_root
+        )
         return lines
